@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { FixedSizeList as List } from "react-window";
+import { FixedSizeList } from "react-window";
 import Papa from "papaparse";
 import Navbar from "@/components/Navbar";
 import TickerTape from "@/components/TickerTape";
@@ -43,7 +43,7 @@ export default function MarketsPage() {
          Papa.parse(csvText, {
           header: true,
           skipEmptyLines: true,
-          complete: (results) => {
+          complete: (results: Papa.ParseResult<any>) => {
             const mapped: Stock[] = results.data.map((row: any) => ({
               symbol: row.SYMBOL || row.Symbol || "",
               name: row["NAME OF COMPANY"] || row.NAME || row.Company || "",
@@ -55,11 +55,11 @@ export default function MarketsPage() {
             if (mapped.length === 0) throw new Error("Empty data");
             
             // Add some simulated BSE stocks for the toggle demo
-            const bseSim = mapped.slice(0, 500).map(s => ({ ...s, exchange: "BSE" as const }));
+            const bseSim = mapped.slice(0, 500).map((s: Stock) => ({ ...s, exchange: "BSE" as const }));
             setStocks([...mapped, ...bseSim]);
             setLoading(false);
           },
-          error: (err) => {
+          error: (err: Error) => {
             console.error("CSV Parse Error:", err);
             handleFallback();
           }
@@ -242,14 +242,14 @@ export default function MarketsPage() {
               <p style={{ color: "#6B7280", fontSize: "0.9rem" }}>Loading Market Database...</p>
             </div>
           ) : filteredStocks.length > 0 ? (
-            <List
+            <FixedSizeList
               height={dimensions.height}
               itemCount={filteredStocks.length}
               itemSize={60}
               width={dimensions.width}
             >
               {Row}
-            </List>
+            </FixedSizeList>
           ) : (
             <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <p style={{ color: "#6B7280" }}>No stocks found matching "{search}"</p>

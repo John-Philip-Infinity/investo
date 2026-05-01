@@ -10,7 +10,7 @@ const NAV = [
   { href: "#", label: "AI Coach",  icon: BrainCircuit },
 ];
 
-export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
+export default function Navbar({ onLaunch }: { onLaunch?: () => void }) {
   const [open, setOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState<"checking" | "online" | "offline">("checking");
 
@@ -69,7 +69,10 @@ export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
             </span>
           </div>
           <button 
-            onClick={onLaunch}
+            onClick={() => {
+              if (onLaunch) onLaunch();
+              else window.location.href = "/";
+            }}
             className="btn-primary" 
             style={{ padding: "0.45rem 1rem", fontSize: "0.8rem" }}
           >
