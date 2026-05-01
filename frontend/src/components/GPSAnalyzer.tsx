@@ -131,7 +131,7 @@ export default function GPSAnalyzer({ initialTicker = "" }: { initialTicker?: st
           }
         } catch {}
       }
-    }, 1000);
+    }, 10000);
     return () => clearInterval(id);
   }, [data?.ticker]);
 

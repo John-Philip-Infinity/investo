@@ -93,6 +93,11 @@ def fetch_single_asset(asset_tuple):
     price += jitter
     baseline = FALLBACK_PRICES.get(disp_sym, price)
     pct = ((price - baseline) / baseline * 100) if baseline else 0.0
+    # Simulate a GPS score for sorting (Best Buy)
+    seed = sum(ord(c) for c in disp_sym)
+    rng = lambda mn, mx, o=0: round((abs(np.sin(seed + o)) * (mx - mn) + mn), 2)
+    gps = round(0.3*rng(40,92,1) + 0.35*rng(35,90,2) + 0.2*rng(25,88,3) + 0.15*rng(50,82,4), 2)
+
     return {
         "symbol": disp_sym,
         "data": {
@@ -103,6 +108,7 @@ def fetch_single_asset(asset_tuple):
             "currency": currency,
             "decimals": decimals,
             "cat": cat,
+            "gps": gps
         }
     }
 

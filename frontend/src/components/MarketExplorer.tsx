@@ -11,6 +11,7 @@ interface Asset {
   currency: string;
   decimals: number;
   cat: string;
+  gps: number;
 }
 
 const CATS = [
@@ -24,6 +25,7 @@ const CATS = [
 export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: string) => void }) {
   const [cat, setCat] = useState("all");
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"name" | "gps" | "change">("gps");
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,16 +60,22 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
 
   useEffect(() => {
     fetchMarkets();
-    const id = setInterval(fetchMarkets, 1000); // UPDATE EVERY SECOND
+    const id = setInterval(fetchMarkets, 10000); // UPDATE EVERY 10 SECONDS
     return () => clearInterval(id);
   }, [fetchMarkets]);
 
-  const filtered = assets.filter(a => {
-    const matchCat = cat === "all" || a.cat === cat;
-    const matchSearch = a.symbol.toLowerCase().includes(search.toLowerCase()) || 
-                       a.name.toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const filtered = assets
+    .filter(a => {
+      const matchCat = cat === "all" || a.cat === cat;
+      const matchSearch = a.symbol.toLowerCase().includes(search.toLowerCase()) || 
+                         a.name.toLowerCase().includes(search.toLowerCase());
+      return matchCat && matchSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === "gps") return b.gps - a.gps;
+      if (sortBy === "change") return b.change - a.change;
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -133,6 +141,19 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
               }}
             />
           </div>
+
+          <select 
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            style={{ 
+              background: "#151A20", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", 
+              padding: "0.5rem", fontSize: "0.85rem", color: "#F3F4F6", outline: "none", cursor: "pointer"
+            }}
+          >
+            <option value="gps">Sort by Best Buy (GPS)</option>
+            <option value="change">Sort by Momentum (%)</option>
+            <option value="name">Sort by Name</option>
+          </select>
         </div>
       </div>
 
@@ -164,6 +185,7 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
                 <th style={{ textAlign: "left", padding: "1rem", fontSize: "0.7rem", color: "#4B5563", textTransform: "uppercase", letterSpacing: "0.05em" }}>Asset</th>
                 <th style={{ textAlign: "right", padding: "1rem", fontSize: "0.7rem", color: "#4B5563", textTransform: "uppercase", letterSpacing: "0.05em" }}>Price</th>
                 <th style={{ textAlign: "right", padding: "1rem", fontSize: "0.7rem", color: "#4B5563", textTransform: "uppercase", letterSpacing: "0.05em" }}>Change</th>
+                <th style={{ textAlign: "right", padding: "1rem", fontSize: "0.7rem", color: "#00E5FF", textTransform: "uppercase", letterSpacing: "0.05em" }}>GPS (Score)</th>
                 <th style={{ textAlign: "center", padding: "1rem", fontSize: "0.7rem", color: "#4B5563", textTransform: "uppercase", letterSpacing: "0.05em" }}>Category</th>
                 <th style={{ textAlign: "right", padding: "1rem", fontSize: "0.7rem", color: "#4B5563", textTransform: "uppercase", letterSpacing: "0.05em" }}>Action</th>
               </tr>
@@ -203,6 +225,13 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
                       }}>
                         {up ? <TrendingUp size={12}/> : <TrendingDown size={12}/>}
                         {up ? "+" : ""}{a.change.toFixed(2)}%
+                      </span>
+                    </td>
+                    <td style={{ padding: "1rem", textAlign: "right" }}>
+                      <span style={{ 
+                        fontWeight: 900, fontSize: "0.9rem", color: a.gps > 75 ? "#00C805" : a.gps > 50 ? "#00E5FF" : "#FF3B3B" 
+                      }}>
+                        {a.gps}
                       </span>
                     </td>
                     <td style={{ padding: "1rem", textAlign: "center" }}>

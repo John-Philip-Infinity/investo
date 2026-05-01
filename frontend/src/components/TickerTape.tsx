@@ -74,10 +74,10 @@ export default function TickerTape() {
 
   useEffect(() => {
     fetchPrices();
-    const fetchInterval = setInterval(fetchPrices, 1000); // UPDATE EVERY SECOND
+    const fetchInterval = setInterval(fetchPrices, 10000); // UPDATE EVERY 10 SECONDS
     const clockInterval = setInterval(() => {
       setTime(new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour12: false }));
-    }, 1000);
+    }, 10000);
 
     return () => {
       clearInterval(fetchInterval);
