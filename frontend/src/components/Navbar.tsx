@@ -1,12 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Activity, Menu, X, Search, BarChart2, BrainCircuit, TrendingUp, Globe } from "lucide-react";
+import Link from "next/link";
 
 const NAV = [
-  { href: "#", label: "GPS Analyzer",  icon: Search },
-  { href: "#", label: "Screeners",     icon: BarChart2 },
-  { href: "#", label: "AI Coach",      icon: BrainCircuit },
-  { href: "#", label: "Markets",       icon: Globe },
+  { href: "/", label: "Analyzer",  icon: Search },
+  { href: "/markets", label: "Markets", icon: Globe },
+  { href: "#", label: "Screeners", icon: BarChart2 },
+  { href: "#", label: "AI Coach",  icon: BrainCircuit },
 ];
 
 export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
@@ -33,7 +34,7 @@ export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.25rem", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
 
         {/* Logo */}
-        <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <div style={{ background: "linear-gradient(135deg,#00E5FF,#0077AA)", padding: 6, borderRadius: 8, display: "flex" }}>
             <Activity size={18} color="#000" />
           </div>
@@ -43,19 +44,19 @@ export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
           <span style={{ background: "rgba(0,200,5,0.15)", color: "#00C805", border: "1px solid rgba(0,200,5,0.3)", borderRadius: 4, fontSize: "0.6rem", fontWeight: 800, padding: "1px 5px", letterSpacing: "0.08em" }}>
             BETA
           </span>
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <nav style={{ display: "flex", gap: 2, alignItems: "center" }} className="desktop-nav">
           {NAV.map(({ href, label, icon: Icon }) => (
-            <a key={label} href={href}
+            <Link key={label} href={href}
               style={{ display: "flex", alignItems: "center", gap: 6, padding: "0.45rem 0.85rem", borderRadius: 8, textDecoration: "none", fontSize: "0.82rem", fontWeight: 500, color: "#9CA3AF", transition: "all 0.2s" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#F3F4F6"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
             >
               <Icon size={14} />
               {label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -85,12 +86,12 @@ export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
       {open && (
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "0.75rem 1.25rem", display: "flex", flexDirection: "column", gap: 4 }}>
           {NAV.map(({ href, label, icon: Icon }) => (
-            <a key={label} href={href} onClick={() => setOpen(false)}
+            <Link key={label} href={href} onClick={() => setOpen(false)}
               style={{ display: "flex", alignItems: "center", gap: 8, padding: "0.6rem 0.75rem", borderRadius: 8, textDecoration: "none", fontSize: "0.875rem", color: "#9CA3AF" }}
             >
               <Icon size={15} />
               {label}
-            </a>
+            </Link>
           ))}
         </div>
       )}
