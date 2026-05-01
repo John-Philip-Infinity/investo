@@ -92,7 +92,7 @@ export default function GPSAnalyzer({ initialTicker = "" }: { initialTicker?: st
       setResearchPhase("Synthesizing agent reports...");
       await new Promise(r => setTimeout(r, 400));
 
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
       const res = await fetch(`${API_BASE}/api/analyze`, { 
         method: "POST", 
         headers: { "Content-Type": "application/json" }, 
@@ -104,7 +104,7 @@ export default function GPSAnalyzer({ initialTicker = "" }: { initialTicker?: st
       setActiveView("summary");
     } catch (err) {
       console.error(err);
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
       setError(`Analysis failed. The AI engine at ${API_BASE} is unreachable. Check your Vercel Environment Variables.`);
     }
     setLoading(false);
@@ -123,7 +123,7 @@ export default function GPSAnalyzer({ initialTicker = "" }: { initialTicker?: st
     const id = setInterval(async () => {
       if (data && data.ticker) {
         try {
-          const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+          const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
           const res = await fetch(`${API_BASE}/api/prices/${data.ticker}`);
           if (res.ok) {
             const json = await res.json();
