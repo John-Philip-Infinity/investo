@@ -10,6 +10,12 @@ from concurrent.futures import ThreadPoolExecutor
 
 app = FastAPI(title="Investora API", version="3.1.0")
 
+@app.get("/api/health")
+@app.get("/")
+def health():
+    return {"status": "ok", "mode": "serverless", "version": "3.1.0"}
+
+
 # Allow everything for easy hosting
 app.add_middleware(
     CORSMiddleware,

@@ -16,7 +16,7 @@ export default function Navbar({ onLaunch }: { onLaunch: () => void }) {
   useEffect(() => {
     const check = async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
         const res = await fetch(`${API_BASE}/api/prices`);
         setApiStatus(res.ok ? "online" : "offline");
       } catch {
