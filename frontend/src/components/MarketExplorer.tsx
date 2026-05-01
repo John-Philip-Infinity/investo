@@ -26,6 +26,7 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
   const [search, setSearch] = useState("");
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<number | null>(null);
 
   const fetchMarkets = useCallback(async () => {
@@ -46,9 +47,12 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
         
         setLastUpdate(json.fetched_at);
         setLoading(false);
+        setError(null);
       }
     } catch (err) {
       console.error("Failed to fetch markets", err);
+      setError("Connection failed. Ensure NEXT_PUBLIC_API_URL is set in Vercel.");
+      setLoading(false);
     }
   }, []);
 
@@ -227,13 +231,20 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
                   </tr>
                 );
               })}
-              {filtered.length === 0 && !loading && (
+              {error && (
                 <tr>
-                  <td colSpan={4} style={{ padding: "3rem", textAlign: "center", color: "#4B5563" }}>
-                    No assets found matching your criteria.
+                  <td colSpan={5} style={{ padding: "3rem", textAlign: "center" }}>
+                    <div style={{ color: "#FF3B3B", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem" }}>
+                      <RefreshCw size={24} />
+                      <div style={{ fontWeight: 700 }}>{error}</div>
+                      <div style={{ fontSize: "0.75rem", color: "#6B7280" }}>
+                        Check your Backend URL in Vercel Settings → Environment Variables
+                      </div>
+                    </div>
                   </td>
                 </tr>
               )}
+              {filtered.length === 0 && !loading && !error && (
             </tbody>
           </table>
         </div>

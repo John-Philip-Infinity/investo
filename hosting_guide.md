@@ -31,6 +31,7 @@ Vercel is the best platform for Next.js applications.
 5.  **Environment Variables**:
     *   Add a variable named `NEXT_PUBLIC_API_URL`.
     *   Value: `https://investora-api.onrender.com` (Your Render URL).
+    *   **⚠️ CRITICAL**: If you skip this, the website will load but it won't be able to fetch any market data!
 6.  **Deploy**: Click **Deploy**.
 
 ---

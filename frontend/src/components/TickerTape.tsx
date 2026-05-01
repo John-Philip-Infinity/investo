@@ -66,7 +66,8 @@ export default function TickerTape() {
           setIsLive(true);
         }
       }
-    } catch {
+    } catch (err) {
+      console.error("TickerTape Connection Error:", err);
       setIsLive(false);
     }
   }, []);
