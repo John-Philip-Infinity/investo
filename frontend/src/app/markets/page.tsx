@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+// @ts-ignore
 import { FixedSizeList } from "react-window";
 import Papa from "papaparse";
 import Navbar from "@/components/Navbar";
@@ -49,8 +50,8 @@ export default function MarketsPage() {
               name: row["NAME OF COMPANY"] || row.NAME || row.Company || "",
               series: row.SERIES || row.Series || "EQ",
               listingDate: row["DATE OF LISTING"] || row.ListingDate || "N/A",
-              exchange: "NSE"
-            })).filter(s => s.symbol);
+              exchange: "NSE" as const
+            })).filter((s: any) => s.symbol);
             
             if (mapped.length === 0) throw new Error("Empty data");
             
