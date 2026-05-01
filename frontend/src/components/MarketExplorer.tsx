@@ -30,7 +30,8 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
 
   const fetchMarkets = useCallback(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/prices");
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${API_BASE}/api/prices`);
       if (res.ok) {
         const json = await res.json();
         const assetList = Object.values(json.prices) as Asset[];

@@ -48,7 +48,8 @@ export default function TickerTape() {
   // Fetch from backend
   const fetchPrices = useCallback(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/prices");
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${API_BASE}/api/prices`);
       if (res.ok) {
         const json = await res.json();
         if (json.prices && Object.keys(json.prices).length > 0) {

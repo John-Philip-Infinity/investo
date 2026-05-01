@@ -15,7 +15,9 @@ app = FastAPI(title="Investora API", version="3.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],
+    allow_origins=["*"], # In production, you should list your Vercel URL here
+    allow_methods=["*"], 
+    allow_headers=["*"],
 )
 
 # ── Asset definitions ──────────────────────────────────────────────────────────

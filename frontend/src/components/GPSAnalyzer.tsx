@@ -74,7 +74,8 @@ export default function GPSAnalyzer({ initialTicker = "" }: { initialTicker?: st
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/analyze", { 
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${API_BASE}/api/analyze`, { 
         method: "POST", 
         headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify({ ticker: t }) 
@@ -102,7 +103,8 @@ export default function GPSAnalyzer({ initialTicker = "" }: { initialTicker?: st
     const id = setInterval(async () => {
       if (data && data.ticker) {
         try {
-          const res = await fetch(`http://127.0.0.1:8000/api/prices/${data.ticker}`);
+          const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+          const res = await fetch(`${API_BASE}/api/prices/${data.ticker}`);
           if (res.ok) {
             const json = await res.json();
             setData(prev => prev ? { ...prev, current_price: json.price } : null);
