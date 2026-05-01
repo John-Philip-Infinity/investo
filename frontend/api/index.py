@@ -108,7 +108,9 @@ def fetch_single_asset(asset_tuple):
             "currency": currency,
             "decimals": decimals,
             "cat": cat,
-            "gps": gps
+            "gps": gps,
+            "technical": rng(40, 92, 1),
+            "fundamental": rng(35, 90, 2)
         }
     }
 

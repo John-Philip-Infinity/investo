@@ -12,6 +12,8 @@ interface Asset {
   decimals: number;
   cat: string;
   gps: number;
+  technical: number;
+  fundamental: number;
 }
 
 const CATS = [
@@ -25,7 +27,9 @@ const CATS = [
 export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: string) => void }) {
   const [cat, setCat] = useState("all");
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "gps" | "change">("gps");
+  const [sortBy, setSortBy] = useState<"name" | "gps" | "change" | "technical" | "fundamental">("gps");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [strategy, setStrategy] = useState<"all" | "day" | "short" | "long">("all");
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,12 +73,23 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
       const matchCat = cat === "all" || a.cat === cat;
       const matchSearch = a.symbol.toLowerCase().includes(search.toLowerCase()) || 
                          a.name.toLowerCase().includes(search.toLowerCase());
+      
+      // Strategy filtering
+      if (strategy === "day") return a.technical > 75;
+      if (strategy === "short") return a.gps > 70;
+      if (strategy === "long") return a.fundamental > 70;
+      
       return matchCat && matchSearch;
     })
     .sort((a, b) => {
-      if (sortBy === "gps") return b.gps - a.gps;
-      if (sortBy === "change") return b.change - a.change;
-      return a.name.localeCompare(b.name);
+      let comparison = 0;
+      if (sortBy === "gps") comparison = a.gps - b.gps;
+      else if (sortBy === "change") comparison = a.change - b.change;
+      else if (sortBy === "technical") comparison = a.technical - b.technical;
+      else if (sortBy === "fundamental") comparison = a.fundamental - b.fundamental;
+      else comparison = b.name.localeCompare(a.name);
+      
+      return sortOrder === "desc" ? -comparison : comparison;
     });
 
   return (
@@ -150,11 +165,49 @@ export default function MarketExplorer({ onAnalyze }: { onAnalyze: (ticker: stri
               padding: "0.5rem", fontSize: "0.85rem", color: "#F3F4F6", outline: "none", cursor: "pointer"
             }}
           >
-            <option value="gps">Sort by Best Buy (GPS)</option>
+            <option value="gps">Sort by GPS</option>
             <option value="change">Sort by Momentum (%)</option>
+            <option value="technical">Sort by Tech (Day Trading)</option>
+            <option value="fundamental">Sort by Funda (Long Term)</option>
             <option value="name">Sort by Name</option>
           </select>
+
+          <button 
+            onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+            style={{ 
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", 
+              borderRadius: "8px", padding: "0.5rem", cursor: "pointer", color: "#9CA3AF",
+              fontSize: "0.75rem", fontWeight: 700
+            }}
+          >
+            {sortOrder === "desc" ? "High → Low" : "Low → High"}
+          </button>
         </div>
+      </div>
+
+      {/* Strategy Selector */}
+      <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", background: "rgba(0,0,0,0.2)", padding: "0.75rem", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.05)" }}>
+        <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#6B7280", textTransform: "uppercase" }}>Strategy Focus:</span>
+        {[
+          { id: "all", label: "All Assets" },
+          { id: "day", label: "🔥 Day Trading (High Tech)" },
+          { id: "short", label: "⚡ Short Term (High GPS)" },
+          { id: "long", label: "💎 Long Term (High Funda)" }
+        ].map(s => (
+          <button
+            key={s.id}
+            onClick={() => setStrategy(s.id as any)}
+            style={{
+              padding: "0.4rem 0.8rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700,
+              cursor: "pointer", transition: "all 0.2s",
+              background: strategy === s.id ? "rgba(0,229,255,0.15)" : "transparent",
+              color: strategy === s.id ? "#00E5FF" : "#4B5563",
+              border: strategy === s.id ? "1px solid #00E5FF44" : "1px solid transparent"
+            }}
+          >
+            {s.label}
+          </button>
+        ))}
       </div>
 
       {/* Category Tabs */}
